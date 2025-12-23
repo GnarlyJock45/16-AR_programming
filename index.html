@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>My First AR App</title>
+    <meta name="description" content="Simple WebAR Demo">
+    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+
+    <script>
+      // We are registering a new "component" (like a class/script in Unity or React)
+      AFRAME.registerComponent('color-changer', {
+        // 'init' is the constructor/componentDidMount
+        init: function () {
+          // Define colors
+          const color1 = '#4CC3D9'; // Cyan
+          const color2 = '#EF2D5E'; // Pink
+          let isToggled = false;
+
+          // 'this.el' refers to the <a-box> HTML element this script is attached to.
+          // We add a standard JS event listener for a 'click'.
+          this.el.addEventListener('click', function (evt) {
+            isToggled = !isToggled;
+            const newColor = isToggled ? color2 : color1;
+
+            // Update the 3D property of the element
+            console.log(`Cube clicked! Changing color to ${newColor}`);
+            this.setAttribute('color', newColor);
+
+            //Optional: nudge it slightly to show dynamic position updates
+            const currentPos = this.getAttribute('position');
+            this.setAttribute('position', {x: currentPos.x, y: currentPos.y + 0.1, z: currentPos.z});
+            setTimeout(() => {
+                 this.setAttribute('position', currentPos);
+            }, 200);
+          });
+        }
+      });
+    </script>
+  </head>
+
+  <body>
+    <a-scene xr-mode-ui="enabled: true">
+
+      <a-entity camera look-controls>
+        <a-entity cursor="rayOrigin: mouse" raycaster="objects: .clickable"></a-entity>
+      </a-entity>
+
+      <a-box id="myCube"
+             class="clickable"
+             position="0 1.5 -2"
+             rotation="0 45 0"
+             scale="0.5 0.5 0.5"
+             color="#4CC3D9"
+             color-changer
+             animation="property: rotation; to: 0 405 0; loop: true; dur: 10000; easing: linear">
+      </a-box>
+
+      <a-entity light="type: ambient; intensity: 0.5;"></a-entity>
+      <a-entity light="type: directional; intensity: 1;" position="-1 1 0"></a-entity>
+
+    </a-scene>
+  </body>
+</html>
